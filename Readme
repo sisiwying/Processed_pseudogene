@@ -1,0 +1,47 @@
+The repository is for hosting code for identifying processed pseudogenes. The pipeline was used on Xenopus tropicalis 9.1 and 
+Xenopus laevis 9.2 genomes. There are in total 3802 and 22996 processed pseudogenes identified for tropicalis and laevis, respectively.
+The analysis pipeline was written based on the description from two papers by Zhang et al 2002 and 2003. Here are the references for
+the two papers:
+
+Zhang Z, Harrison P, Gerstein M. Identification and analysis of over 2000 ribosomal protein pseudogenes in the human genome. Genome 
+Res. 2002 Oct;12(10):1466-82.
+
+Zhang Z, Harrison PM, Liu Y, Gerstein M. Millions of years of evolution preserved: a comprehensive catalog of the processed pseudogenes
+in the human genome. Genome Res. 2003 Dec;13(12):2541-58.
+
+We outline the analysis pipeline here:
+
+Identification of processed pseudogenes
+
+1)	Download repeat masked genome sequences and protein sequences
+
+2)	Align protein sequences to genome using six-frame Blast search for searching for raw fragment homologies of protein sequences
+
+    Chromosomes are split into smaller overlapping chunks of 5.1 mb.
+    Program tblastn is used for blasting
+    Default SEG low-complexity filter parameters (12 2.2 2.5) are used in the homology search. Significant value (e-value<1e-4) is used
+    
+3)	Removing overlaps with annotated genes
+    Compare the chromosomal locations of the Blast hits with the location of the annotate genes, and if overlapping significantly
+    with an annotated gene, the matches are removed from the set
+
+4)	Merge adjacent fragment homologies into single protein matches
+    Two adjacent homology fragments, M1 and M2, which match same protein, will be merged if they satisfy the following two criteria: 
+    a)	|q_21-q_12|<=max(20, 0.2*L) and c_21-c_12<=5000, where L denotes the length of the query protein sequence
+    b)	c_22-c_21<=60
+
+5)	Optimization from Smith-Waterman alignment of merged matches
+    Extend each match on both sides to equal the length of the protein they matched plus 30 bp.
+    The protein sequences are aligned to the extended matches using the Smith-Waterman alignment algorithm implemented by program FASTA. 
+    Matches are cleaned up by removing redundant matches, splitting matches with gaps longer than 60 bp. 
+    The resulting matches are processed pseudogene candidates
+    
+6)	Checking for frame disruptions
+
+7)	Identify processes pseudogenes
+    Label them as processed pseudogenes if they meet two criteria:
+    a)	They contain gaps of shorter than 60 bp, that is c_21-c12<=60
+    b)	They produced transcripts longer than 70% of the protein sequence they matched (the alignment covers .70% of the coding sequence (CDS))
+
+8)	Further verification by poly-A signal
+
