@@ -38,10 +38,11 @@ Identification of processed pseudogenes
     
 6)	Checking for frame disruptions
 
-7)	Identify processes pseudogenes
+7)	Identify processesed pseudogenes
     Label them as processed pseudogenes if they meet two criteria:
     a)	They contain gaps of shorter than 60 bp, that is c_21-c12<=60
-    b)	They produced transcripts longer than 70% of the protein sequence they matched (the alignment covers .70% of the coding sequence (CDS))
+    b)	They produced transcripts longer than 70% of the protein sequence they matched (the alignment covers 70% of the coding 
+    sequence (CDS))
 
 8)	Further verification by poly-A signal
 
